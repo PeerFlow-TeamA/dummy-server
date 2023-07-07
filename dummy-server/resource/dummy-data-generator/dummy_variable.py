@@ -1,6 +1,6 @@
 
 # 생성될 csv 파일 이름
-csv_dir = '../'
+csv_dir = './resource/'
 csv_name = {
     'writter': 'writter_data.csv',
     'question': 'question_data.csv',
