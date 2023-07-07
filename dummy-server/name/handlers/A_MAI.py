@@ -3,23 +3,42 @@ from .env import env
 from .http_handler import *
 
 error_msg_key = "message"
+sort_value_error_msg = "sort standard incorrected - sort standard must be one of [lastest, views, recommends]"
+category_value_error_msg = "category not correct - category must be one of [ft_irc, minishell, minirt]"
+
+class SortValueError(Exception):
+    def __init__(self, message):
+        self.message = message
+    def __str__(self):
+        return self.message
+    
+class CategoryValueError(Exception):
+    def __init__(self, message):
+        self.message = message
+    def __str__(self):
+        return self.message
 
 def A_MAI_00_handler(request):
-    category : str = request.GET.get("category")
-    sort : str = request.GET.get("sort")
-    page : int = request.GET.get("page")
-    size : int = request.GET.get("size")
+    try:
+        category : str = request.GET.get("category")
+        sort : str = request.GET.get("sort")
+        page : int = int(request.GET.get("page"))
+        size : int = int(request.GET.get("size"))
+        
+        if category not in env.get_env("category_limit"):
+            raise CategoryValueError(category_value_error_msg)
+        if sort not in env.get_env("sort_limit"):
+            raise SortValueError(sort_value_error_msg)
+    except SortValueError as e:
+        return error_response(400, error_msg_key, e.message)
+    except CategoryValueError as e:
+        return error_response(400, error_msg_key, e.message)
+    except Exception as e:
+        return error_response(400, error_msg_key, "Error occured - " + str(e))
 
-    category_value = ["minishell", "ft_irc", "minirt"]
-    sort_value = ["lastest", "views", "recommends"]
-    
-    if category not in category_value:
-        return error_response(400, error_msg_key, "category not correct - category must be one of [ft_irc, minishell, minirt]")
-    if sort not in sort_value:
-        return error_response(400, error_msg_key, "sort standard incorrected - sort standard must be one of [lastest, views, recommends]")
-    
+    print(category, sort, page, size)
+    print(type(category), type(sort), type(page), type(size))
 
-    
     return JsonResponse({
         "category": category,
         "sort": sort,

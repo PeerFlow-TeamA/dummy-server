@@ -12,7 +12,9 @@ class Env_loader():
         return self.__env[key]
 
 env = Env_loader()
-env.set_env("title", "minishell")
+env.set_env("error_msg_key", "message")
+env.set_env("category_limit", ["minishell", "ft_irc", "minirt"])
+env.set_env("sort_limit", ["lastest", "views", "recommends"])
 
 export = {
     "env": env
