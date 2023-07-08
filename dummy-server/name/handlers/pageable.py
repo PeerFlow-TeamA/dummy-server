@@ -1,5 +1,13 @@
 from .data_pool import DataListSerializer
 
+# sort - sorted : 정렬 여부
+# sort - unsorted : 정렬 안된 여부
+# sort - empty : 정렬할 데이터가 없는지 여부 == (content.size == 0)
+# pageNumber : 현재 페이지 번호
+# pageSize : 페이지 크기
+# offset : 페이지 시작 위치 (pageNumber * pageSize)
+# paged : 페이지 여부
+# unpaged : 페이지가 아닌지 여부
 def init_pageable_info(data : list, page : int, page_size : int) -> dict:
     return {
         "sort" : {
@@ -14,6 +22,17 @@ def init_pageable_info(data : list, page : int, page_size : int) -> dict:
         "unpaged" : False
     }
 
+# sort - sorted : 전체 데이터의 정렬 여부
+# sort - unsorted : 전체 데이터의 정렬 안된 여부
+# sort - empty : 전체 데이터 중 정렬할 데이터가 없는지 여부 == (content.size == 0)
+# last : 마지막 페이지 여부
+# first : 첫번째 페이지 여부
+# number : 현재 페이지 번호
+# numberOfElements : 현재 페이지에서 요청이 들어왔을 때 조회된 데이터의 개수 (content.size)
+# size : 페이지 크기
+# totalElements : 전체 데이터 개수
+# totalPages : 전체 페이지 개수
+# empty : 조회된 데이터가 없는지 여부 (content.size == 0)
 def init_content_metainfo(data : list, size : int) -> dict:
     return {
         "last" : False,
