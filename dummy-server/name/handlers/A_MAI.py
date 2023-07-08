@@ -1,7 +1,7 @@
 from django.http import JsonResponse, HttpResponse
 from .env import env
 from .http_handler import *
-from .data_pool import get_datapool, DataCropper, DataListSerializer
+from .data_pool import get_datapool, DataCropper, DataListSerializer, DataSearchEngine
 from .pageable import Pageable
 import json
 
@@ -46,9 +46,9 @@ def A_MAI_00_handler(request):
         return error_response(400, error_msg_key, "Error occured - " + str(e))
 
     try:
-        writters = get_datapool().get_question_list()
+        questions = get_datapool().get_question_list()
         page, size = int(query_params['page']), int(query_params['size'])
-        cropper = DataCropper.crop_page(writters, page, size)
+        cropper = DataCropper.crop_page(questions, page, size)
         pageable = Pageable(cropper, page, size, query_params['sort'])
         return normal_response_json(pageable.to_dict())
     except Exception as e:
@@ -59,7 +59,6 @@ def A_MAI_00_handler(request):
 def A_MAI_01_handler(request):
     try:
         query_params = get_query_params(request)
-
         if query_params['sort'] not in env.get("sort_limit"):
             raise SortValueError(sort_value_error_msg)
     except SortValueError as e:
@@ -69,9 +68,9 @@ def A_MAI_01_handler(request):
     
 
     try:
-        return JsonResponse({
-            "title": query_params['title'],
-            "sort": query_params['sort'],
-        })    
+        questions = get_datapool().get_question_list()
+        founds = DataSearchEngine.search(questions, query_params['title'])
+        pageable = Pageable(founds, query_params['sort'])
+        return normal_response_json(pageable.to_dict())
     except Exception as e:
         return error_response(500, error_msg_key, "Error occured - " + str(e))

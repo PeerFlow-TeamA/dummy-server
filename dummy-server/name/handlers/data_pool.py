@@ -77,7 +77,16 @@ class DataCropper():
         start = page * page_size
         end = start + page_size
         return DataCropper.crop(data, start, end)
-    
+
+class DataSearchEngine():
+    @staticmethod
+    def search(data : list, search_keyword : str):
+        result = []
+        for item in data:
+            if item.title.find(search_keyword) != -1:
+                result.append(item)
+        return result
+
 
 class DataListSerializer():
     @staticmethod

@@ -138,25 +138,3 @@ class AnswerComment():
             "updated_at": self.updated_at
         }
     
-class Pageable():
-    def __init__(self, sort, pageNumber, pageSize, offset, paged, unpaged):
-        self.sort : dict = {
-            "sorted": False,
-            "unsorted": True,
-            "empty": True
-        }
-        self.pageNumber : int = 0
-        self.pageSize : int = 0
-        self.offset : int = 0
-        self.paged : bool = False
-        self.unpaged : bool = False
-
-    def to_dict(self):
-        return {
-            "sort": self.sort,
-            "pageNumber": self.pageNumber,
-            "pageSize": self.pageSize,
-            "offset": self.offset,
-            "paged": self.paged,
-            "unpaged": self.unpaged
-        }
