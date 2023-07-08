@@ -21,7 +21,11 @@ from . import views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    # A_MAI
     path("v1", views.A_MAI_00_handler),
-    path("v1/search", views.A_MAI_01_handler)
-    path(v1/question, views.B_WRIT_00_handler)),
+    path("v1/search", views.A_MAI_01_handler),
+    # B_WRI
+    path("v1/question", views.B_WRI_question_handler),
+    path("v1/question/<int:question_id>", views.B_WRI_question_handler),
+    # C_DET
 ]
