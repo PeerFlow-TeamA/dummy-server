@@ -2,6 +2,12 @@ from django.http import JsonResponse
 from django.http import HttpResponse
 import json
 
+class HTTP_METHOD():
+    GET = "GET"
+    POST = "POST"
+    PUT = "PUT"
+    DELETE = "DELETE"
+
 def error_response(status_code, message_key, message):
     return JsonResponse({
         message_key : message
@@ -15,3 +21,6 @@ def get_query_params(request):
 
 def normal_response_json(payload, status_code = 200, content_type = "application/json"):
     return HttpResponse(json.dumps(payload), content_type=content_type, status=status_code)
+
+def not_allowed_method_response():
+    return error_response(405, "message", "not allowed method")
