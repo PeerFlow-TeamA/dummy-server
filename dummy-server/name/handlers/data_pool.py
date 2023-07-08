@@ -82,6 +82,9 @@ class DataPool():
         index = data.index(old_data)
         data[index] = new_data
 
+    def delete(self, data : list, target : object):
+        data.remove(target)
+
 class InvalidPageError(Exception):
     pass
 
