@@ -23,4 +23,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("v1", views.A_MAI_00_handler),
     path("v1/search", views.A_MAI_01_handler)
+    path(v1/question, views.B_WRIT_00_handler)),
 ]
