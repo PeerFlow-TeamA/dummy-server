@@ -15,6 +15,15 @@ def read_writter_dummy(file_path : str):
             result.append(Writter(row[0], row[1], row[2]))
     finally:
         return result
+    
+def read_question_dummy(file_path : str):
+    try:
+        result = []
+        question_list = read_csv(file_path)[1:]
+        for row in question_list:
+            result.append(Question(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8]))
+    finally:
+        return result
 
 class DataPool():
     def __init__(self) -> None:
@@ -83,6 +92,7 @@ datapool = None
 if datapool is None:
     datapool = DataPool()
     datapool.set_writter_list(read_writter_dummy(env.get("resource_dir") + env.get("writter_csv")))
+    datapool.set_question_list(read_question_dummy(env.get("resource_dir") + env.get("question_csv")))
 
 def get_datapool():
     return datapool

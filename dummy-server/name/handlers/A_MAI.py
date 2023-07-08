@@ -2,6 +2,7 @@ from django.http import JsonResponse, HttpResponse
 from .env import env
 from .http_handler import *
 from .data_pool import get_datapool, DataCropper, DataListSerializer
+from .pageable import Pageable
 import json
 
 error_msg_key = "message"
@@ -45,21 +46,11 @@ def A_MAI_00_handler(request):
         return error_response(400, error_msg_key, "Error occured - " + str(e))
 
     try:
-        writters = get_datapool().get_writter_list()
-        jsons = DataListSerializer.convert(writters)
-        page = int(query_params['page'])
-        size = int(query_params['size'])
-        # cropped = DataCropper.crop_page(writters, page, size)
-        
-
-
-        return normal_response_json({
-            "category": query_params['category'],
-            "sort": query_params['sort'],
-            "page": query_params['page'],
-            "size": query_params['size'],
-            "writters": jsons
-        })
+        writters = get_datapool().get_question_list()
+        page, size = int(query_params['page']), int(query_params['size'])
+        cropper = DataCropper.crop_page(writters, page, size)
+        pageable = Pageable(cropper, page, size, query_params['sort'])
+        return normal_response_json(pageable.to_dict())
     except Exception as e:
         return error_response(500, error_msg_key, "Error occured - " + str(e))
 
