@@ -77,6 +77,10 @@ class DataPool():
             if item.id == id:
                 return item
         return None
+    
+    def replace(self, data : list, old_data : object, new_data : object):
+        index = data.index(old_data)
+        data[index] = new_data
 
 class InvalidPageError(Exception):
     pass
