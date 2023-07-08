@@ -25,9 +25,22 @@ def read_question_dummy(file_path : str):
     finally:
         return result
 
+
+
 class DataPool():
     def __init__(self) -> None:
-        self.pool = {}
+        self.pool = {
+            "writter_list" : [],
+            "question_list" : [],
+            "answer_list" : [],
+            "question_comment_list" : [],
+            "answer_comment_list" : []
+        }
+        self.QUESTION_LIST = self.pool["question_list"]
+        self.ANSWER_LIST = self.pool["answer_list"]
+        self.QUESTION_COMMENT_LIST = self.pool["question_comment_list"]
+        self.ANSWER_COMMENT_LIST = self.pool["answer_comment_list"]
+        self.WRITTER_LIST = self.pool["writter_list"]
 
     def set_writter_list(self, writter_list : list):
         self.pool["writter_list"] = writter_list
@@ -59,6 +72,11 @@ class DataPool():
     def get_answer_comment_list(self):
         return self.pool["answer_comment_list"]
     
+    def get_by_id(self, data : list, id : str):
+        for item in data:
+            if item.id == id:
+                return item
+        return None
 
 class InvalidPageError(Exception):
     pass
@@ -105,8 +123,3 @@ if datapool is None:
 
 def get_datapool():
     return datapool
-
-
-
-
-
