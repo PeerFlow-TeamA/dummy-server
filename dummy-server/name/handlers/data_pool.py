@@ -96,7 +96,7 @@ class DataListSerializer():
             result.append(item.to_dict())
         return result
 
-# 싱글톤 패턴 지원
+
 datapool = None
 if datapool is None:
     datapool = DataPool()

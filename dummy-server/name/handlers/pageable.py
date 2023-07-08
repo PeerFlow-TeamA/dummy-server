@@ -6,7 +6,7 @@ def init_pageable_info(data : list, page : int, page_size : int) -> dict:
             "sorted": False,
             "unsorted": True,
             "empty": True
-        },
+        }, 
         "pageNumber" : page,
         "pageSize" : page_size,
         "offset" : page * page_size,
