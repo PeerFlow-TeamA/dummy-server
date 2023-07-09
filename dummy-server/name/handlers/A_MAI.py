@@ -1,7 +1,7 @@
 from django.http import JsonResponse, HttpResponse
 from .env import env
 from .http_handler import *
-from .data_pool import get_datapool, DataCropper, DataListSerializer, DataSearchEngine
+from .data_pool import DataCropper, DataListSerializer, DataSearchEngine, DataPool
 from .pageable import Pageable
 from .exceptions import *
 import json
@@ -16,8 +16,9 @@ def A_MAI_00_handler(request):
         if query_params['sort'] not in env.get("sort_limit"):
             raise SortValueError()
 
-        questions = get_datapool().get_question_list()
+        questions = DataSearchEngine.search_by_category(DataPool.QUESTION_LIST, query_params['category'])
         page, size = int(query_params['page']), int(query_params['size'])
+        print(questions)
         cropper = DataCropper.crop_page(questions, page, size)
         pageable = Pageable(cropper, page, size, query_params['sort'])
         return normal_response_json(pageable.to_dict())
@@ -36,8 +37,7 @@ def A_MAI_01_handler(request):
         if query_params['sort'] not in env.get("sort_limit"):
             raise SortValueError()
 
-        questions = get_datapool().get_question_list()
-        founds = DataSearchEngine.search(questions, query_params['title'])
+        founds = DataSearchEngine.search_by_title(DataPool.QUESTION_LIST, query_params['title'])
         pageable = Pageable(founds, query_params['sort'])
         return normal_response_json(pageable.to_dict())
     

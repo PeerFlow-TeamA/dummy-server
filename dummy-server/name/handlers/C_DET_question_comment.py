@@ -9,27 +9,22 @@ from .pageable import *
 def C_DET_05_create_question_comment(request, question_id):
     try:
         body_params = json.loads(request.body.decode("utf-8"))
-        content = body_params['content']
-        nickname = body_params['nickname']
-        password = body_params['password']
-        created_at = body_params['created_at']
-
-        found = get_datapool().get_by_id(get_datapool().QUESTION_LIST, question_id)
+        found = DataSearchEngine.search_by_id(DataPool.QUESTION_LIST, question_id)
 
         if found is None:
             raise QuestionNotFoundError()
 
         elem = QuestionComment(
-            id = get_datapool().get_next_id(get_datapool().QUESTION_COMMENT_LIST),
+            id = DataPool.get_next_id(DataPool.QUESTION_COMMENT_LIST),
             question_id = question_id,
-            content = content,
-            nickname = nickname,
-            password = password,
-            created_at = created_at,
+            content = body_params['content'],
+            nickname = body_params['nickname'],
+            password = body_params['password'],
+            created_at = body_params['created_at'],
             updated_at = None
         )
 
-        get_datapool().QUESTION_COMMENT_LIST.append(elem)
+        DataPool.add(DataPool.QUESTION_COMMENT_LIST, elem)
 
         return normal_response_json({
             "message" : "question comment created successfully"
@@ -42,24 +37,28 @@ def C_DET_05_create_question_comment(request, question_id):
 def C_DET_06_modify_question_comment(request, question_id, comment_id):
     try:
         body_params = json.loads(request.body.decode("utf-8"))
-        content = body_params['content']
-        nickname = body_params['nickname']
-        password = body_params['password']
-        created_at = body_params['created_at']
 
-        found_question = get_datapool().get_by_id(get_datapool().QUESTION_LIST, question_id)
-        found_comment = get_datapool().get_by_id(get_datapool().QUESTION_COMMENT_LIST, comment_id)
+        found_question = DataSearchEngine.search_by_id(DataPool.QUESTION_LIST, question_id)
+        found_comment = DataSearchEngine.search_by_id(DataPool.QUESTION_COMMENT_LIST, comment_id)
 
         if found_question is None:
             raise QuestionNotFoundError()
         if found_comment is None:
             raise QuestionCommentNotFoundError()
-        if found_comment.password != password:
+        if found_comment.password != body_params['password']:
             raise PasswordIncorrectError()
+        
+        elem = QuestionComment(
+            id = DataPool.get_next_id(DataPool.QUESTION_COMMENT_LIST),
+            question_id = question_id,
+            content = body_params['content'],
+            nickname = body_params['nickname'],
+            password = body_params['password'],
+            created_at = found_comment.created_at,
+            updated_at = body_params['created_at']
+        )
 
-        found_comment.content = content
-        found_comment.nickname = nickname
-        found_comment.updated_at = created_at
+        DataPool.replace(DataPool.QUESTION_COMMENT_LIST, found_comment, elem)
 
         return normal_response_json({
             "message" : "question comment modified successfully"
@@ -76,19 +75,18 @@ def C_DET_06_modify_question_comment(request, question_id, comment_id):
 def C_DET_07_delete_question_comment(request, question_id, comment_id):
     try:
         body_params = json.loads(request.body.decode("utf-8"))
-        password = body_params['password']
 
-        found_question = get_datapool().get_by_id(get_datapool().QUESTION_LIST, question_id)
-        found_comment = get_datapool().get_by_id(get_datapool().QUESTION_COMMENT_LIST, comment_id)
+        found_question = DataSearchEngine.search_by_id(DataPool.QUESTION_LIST, question_id)
+        found_comment = DataSearchEngine.search_by_id(DataPool.QUESTION_COMMENT_LIST, comment_id)
 
         if found_question is None:
             raise QuestionNotFoundError()
         if found_comment is None:
             raise QuestionCommentNotFoundError()
-        if found_comment.password != password:
+        if found_comment.password != body_params['password']:
             raise PasswordIncorrectError()
 
-        get_datapool().delete(get_datapool().QUESTION_COMMENT_LIST, found_comment)
+        DataPool.delete(DataPool.QUESTION_COMMENT_LIST, found_comment)
 
         return normal_response_json({
             "message" : "question comment deleted successfully"
@@ -106,14 +104,16 @@ def C_DET_08_get_all_of_comment_by_question_id(request, question_id):
     try:
         query_params = get_query_params(request)
         page, size = int(query_params['page']), int(query_params['size'])
-        filtered = filter(lambda x: x.question_id == question_id, get_datapool().QUESTION_COMMENT_LIST)
+
+        found_question = DataSearchEngine.search_by_id(DataPool.QUESTION_LIST, question_id)
+        found_comments = DataSearchEngine.search_by_question_id(DataPool.QUESTION_COMMENT_LIST, question_id)
         
-        if filtered is None or len(filtered) == 0:
+        if found_question is None:
             raise QuestionNotFoundError()
         
-        cropper = DataCropper(filtered, page, size)
+        cropped = DataCropper(found_comments, page, size)
         sort = "views"
-        pageable = Pageable(cropper, page, size, sort)
+        pageable = Pageable(cropped, page, size, sort)
 
         return normal_response_json(pageable.to_dict())
     except QuestionNotFoundError as e:

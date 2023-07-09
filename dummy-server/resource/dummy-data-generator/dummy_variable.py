@@ -18,6 +18,9 @@ dummy_size = {
     'question_comment': 1000
 }
 
+# 카테고리 옵션
+category_list = ['minishell', 'ft_irc', 'minirt']
+
 # 더미 데이터 생성 옵션
 generate_sentence_lang = 'en'
 generate_text_lang = 'en'
@@ -45,7 +48,7 @@ date_random_max = {
 # 생성할 csv 파일들의 헤드 정보
 csv_head = {
     'writter': ['pk', 'nickname', 'password'],
-    'question': ['pk', 'title', 'content', 'nickname', 'password', 'views', 'recomment', 'created_at', 'updated_at'],
+    'question': ['pk', 'title', 'content', 'category', 'nickname', 'password', 'views', 'recomment', 'created_at', 'updated_at'],
     'answer': ['pk', 'question_id', 'content', 'nickname', 'password', 'recomment', 'isAdopted', 'created_at', 'updated_at'],
     'question_comment': ['pk', 'question_id', 'content', 'nickname', 'password', 'created_at', 'updated_at'],
     'answer_comment': ['pk', 'answer_id', 'content', 'nickname', 'password', 'created_at', 'updated_at'],

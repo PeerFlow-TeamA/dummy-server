@@ -52,12 +52,6 @@ class Pageable():
         self.content_metainfo : dict = init_content_metainfo(self.list, page_size)
         self.sort_by(sort_standard)
 
-    def __init__(self, list : list, sort_standard : str = "views") -> None:
-        self.list : list = list
-        self.pageable_info : dict = init_pageable_info(self.list, 0, len(self.list))
-        self.content_metainfo : dict = init_content_metainfo(self.list, len(self.list))
-        self.sort_by(sort_standard)
-
     def sort_by(self, key, direction = "ASC"):
         isReversed = False if direction == "ASC" else True if direction == "DESC" else False
         

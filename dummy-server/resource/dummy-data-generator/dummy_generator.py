@@ -2,7 +2,6 @@ import pandas as pd
 import random
 from faker import Faker
 
-
 # import dummy_variable.py
 from dummy_variable import *
 
@@ -69,6 +68,7 @@ def generate_question_data(size : int, writter_data = None):
         pk += 1
         title : str = generate_sentence(generate_sentence_lang)
         content : str = generate_text(generate_text_lang)
+        category : str = random.choice(category_list)
         writter : list = random.choice(writter_data.values.tolist()) if writter_data is not None else random.choice(dummy_data)
         nickname : str = writter[0]
         password : str = writter[1]
@@ -76,7 +76,7 @@ def generate_question_data(size : int, writter_data = None):
         recomment : int = random.randint(recomment_min, recomment_max)
         created_at : str = random_datetime()
         updated_at : str = random_datetime() if random.randint(0, 1) == 1 else 'NULL'
-        dummy_data.append([pk, title, content, nickname, password, views, recomment, created_at, updated_at])
+        dummy_data.append([pk, title, content, category, nickname, password, views, recomment, created_at, updated_at])
 
     df = process_data_by_panadas(dummy_data, csv_head['question'], None)
     save_as_csv(df, csv_name['question'])

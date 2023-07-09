@@ -33,7 +33,7 @@ def B_WRI_00_create_question(request):
             updated_at = None
         )
 
-        get_datapool().QUESTION_LIST.append(elem)
+        DataPool.add(DataPool.QUESTION_LIST, elem)
 
         return normal_response_json({
             "message" : "question created successfully"
@@ -57,9 +57,7 @@ def B_WRI_01_modify_question(request):
         if category not in env.get("category_limit"):
             raise CategoryValueError(category)
 
-
-
-        found = get_datapool().get_question_by_id(id)
+        found = DataSearchEngine.search_by_id(DataPool.QUESTION_LIST, id)
 
         if found is None:
             raise QuestionNotFoundError()
@@ -78,7 +76,7 @@ def B_WRI_01_modify_question(request):
             updated_at = created_at
         )
 
-        get_datapool().replace(get_datapool().QUESTION_LIST, found, elem)
+        DataPool.replace(DataPool.QUESTION_LIST, found, elem)
 
         return normal_response_json({
             "message" : "question modified successfully"
@@ -91,18 +89,22 @@ def B_WRI_01_modify_question(request):
 def B_WRI_02_delete_question(request, question_id):
     try:
         body_params = json.loads(request.body.decode("utf-8"))
-        password = body_params['password']
 
-        found = get_datapool().get_question_by_id(question_id)
-
+        found = DataSearchEngine.search_by_id(DataPool.QUESTION_LIST, question_id)
         if found is None:
             raise QuestionNotFoundError()
+        if found.password != body_params['password']:
+            raise PasswordIncorrectError()
+        
+        DataPool.delete(DataPool.QUESTION_LIST, found)
         
         return normal_response_json({
             "message" : "question modified successfully"
         })
     except QuestionNotFoundError as e:
-        return error_response(400, error_msg_key, question_not_found_error_msg)
+        return error_response(404, error_msg_key, question_not_found_error_msg)
+    except PasswordIncorrectError as e:
+        return error_response(403, error_msg_key, password_incorrect_error_msg)
     except Exception as e:
         return error_response(500, error_msg_key, "Error occured - " + str(e))
 
@@ -111,12 +113,11 @@ def B_WRI_02_delete_question(request, question_id):
 def B_WRI_question_handler(request, question_id = None):
     if request.method == HTTP_METHOD.POST and question_id is not None:
         return B_WRI_02_delete_question(request, question_id)
+    
     if request.method == HTTP_METHOD.POST:
         return B_WRI_00_create_question(request)
     
     if request.method == HTTP_METHOD.PUT:
         return B_WRI_01_modify_question(request)
-    
-
     
     return not_allowed_method_response()

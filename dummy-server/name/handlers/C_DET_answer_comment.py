@@ -14,13 +14,13 @@ def C_DET_09_create_answer_comment(request, answer_id):
         password = body_params['password']
         created_at = body_params['created_at']
 
-        found = get_datapool().get_by_id(get_datapool().ANSWER_LIST, answer_id)
+        found = DataSearchEngine.search_by_id(DataPool.ANSWER_LIST, answer_id)
 
         if found is None:
             raise AnswerNotFoundError()
 
         elem = AnswerComment(
-            id = get_datapool().get_next_id(get_datapool().ANSWER_COMMENT_LIST),
+            id = DataPool.get_next_id(DataPool.ANSWER_COMMENT_LIST),
             answer_id = answer_id,
             content = content,
             nickname = nickname,
@@ -29,7 +29,7 @@ def C_DET_09_create_answer_comment(request, answer_id):
             updated_at = None
         )
 
-        get_datapool().ANSWER_COMMENT_LIST.append(elem)
+        DataPool.add(DataPool.ANSWER_COMMENT_LIST, elem)
 
         return normal_response_json({
             "message" : "comment on answer created successfully"
@@ -42,26 +42,28 @@ def C_DET_09_create_answer_comment(request, answer_id):
 def C_DET_10_modify_answer_comment(request, answer_id, comment_id):
     try:
         body_params = json.loads(request.body.decode("utf-8"))
-        content = body_params['content']
-        nickname = body_params['nickname']
-        password = body_params['password']
-        created_at = body_params['created_at']
 
-        found = get_datapool().get_by_id(get_datapool().ANSWER_LIST, answer_id)
-
+        found = DataSearchEngine.get_by_id(DataPool.ANSWER_LIST, answer_id)
         if found is None:
             raise AnswerNotFoundError()
 
-        found = get_datapool().get_by_id(get_datapool().ANSWER_COMMENT_LIST, comment_id)
-
+        found = DataSearchEngine.get_by_id(DataPool.ANSWER_COMMENT_LIST, comment_id)
         if found is None:
             raise AnswerCommentNotFoundError()
-        if found.password != password:
+        if found.password != body_params['password']:
             raise PasswordIncorrectError()
 
-        found.content = content
-        found.nickname = nickname
-        found.created_at = created_at
+        elem = AnswerComment(
+            id = comment_id,
+            answer_id = answer_id,
+            content = body_params['content'],
+            nickname = body_params['nickname'],
+            password = body_params['password'],
+            created_at = found.created_at,
+            updated_at = body_params['created_at']
+        )
+
+        DataPool.replace(DataPool.ANSWER_COMMENT_LIST, found, elem)
 
         return normal_response_json({
             "message" : "comment on answer modified successfully"
@@ -80,19 +82,19 @@ def C_DET_11_delete_answer_comment(request, answer_id, comment_id):
         body_params = json.loads(request.body.decode("utf-8"))
         password = body_params['password']
 
-        found = get_datapool().get_by_id(get_datapool().ANSWER_LIST, answer_id)
+        found = DataSearchEngine.get_by_id(DataPool.ANSWER_LIST, answer_id)
 
         if found is None:
             raise AnswerNotFoundError()
 
-        found = get_datapool().get_by_id(get_datapool().ANSWER_COMMENT_LIST, comment_id)
+        found = DataSearchEngine.get_by_id(DataPool.ANSWER_COMMENT_LIST, comment_id)
 
         if found is None:
             raise AnswerCommentNotFoundError()
         if found.password != password:
             raise PasswordIncorrectError()
 
-        get_datapool().ANSWER_COMMENT_LIST.remove(found)
+        DataPool.delete(DataPool.ANSWER_COMMENT_LIST, found)
 
         return normal_response_json({
             "message" : "comment on answer deleted successfully"
@@ -108,14 +110,14 @@ def C_DET_11_delete_answer_comment(request, answer_id, comment_id):
 
 def C_DET_12_get_all_of_comment_answer(request, answer_id):
     try:
-        found = get_datapool().get_by_id(get_datapool().ANSWER_LIST, answer_id)
+        found = DataSearchEngine.get_by_id(DataPool.ANSWER_LIST, answer_id)
         query_params = get_query_params(request)
         page, size = int(query_params['page']), int(query_params['size'])
 
         if found is None:
             raise AnswerNotFoundError()
         
-        comments = get_datapool().get_all_of_comment_answer(answer_id)
+        comments = DataSearchEngine.search_all_comments_on_answer(answer_id)
 
         if comments is None or len(comments) == 0:
             raise AnswerCommentNotFoundError()

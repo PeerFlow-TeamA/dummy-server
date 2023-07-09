@@ -19,6 +19,7 @@ class Question():
                 id,
                 title,
                 content,
+                category,
                 nickname,
                 password,
                 views,
@@ -28,6 +29,7 @@ class Question():
         self.id : int = id
         self.title : str = title
         self.content : str = content
+        self.category : str = category
         self.nickname : str = nickname
         self.password : str = password
         self.views : int = views
@@ -40,6 +42,7 @@ class Question():
             "id": self.id,
             "title": self.title,
             "content": self.content,
+            "category": self.category,
             "nickname": self.nickname,
             "password": self.password,
             "views": self.views,

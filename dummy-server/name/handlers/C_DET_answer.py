@@ -5,7 +5,6 @@ from .entity import *
 from .env import *
 from .exceptions import *
 
-
 def C_DET_01_create_answer(request):
     try:
         body_params = json.loads(request.body.decode("utf-8"))
@@ -15,13 +14,13 @@ def C_DET_01_create_answer(request):
         password = body_params['password']
         created_at = body_params['created_at']
 
-        found = get_datapool().get_question_by_id(question_id)
+        found = DataSearchEngine.search_by_id(DataPool.QUESTION_LIST, question_id)
 
         if found is None:
             raise QuestionNotFoundError()
 
         elem = Answer(
-            id = get_datapool().get_next_id(get_datapool().ANSWER_LIST),
+            id = DataPool.get_next_id(DataPool.ANSWER_LIST),
             question_id = question_id,
             content = content,
             nickname = nickname,
@@ -32,7 +31,7 @@ def C_DET_01_create_answer(request):
             updated_at = None
         )
 
-        get_datapool().ANSWER_LIST.append(elem)
+        DataPool.add(DataPool.ANSWER_LIST, elem)
 
         return normal_response_json({
             "message" : "answer created successfully"
@@ -42,40 +41,34 @@ def C_DET_01_create_answer(request):
     except Exception as e:
         return error_response(500, error_msg_key, "Error occured - " + str(e))
     
-def C_DET_02_modify_answer(request):
+def C_DET_02_modify_answer(request, answer_id):
     try:
         body_params = json.loads(request.body.decode("utf-8"))
-        question_id = body_params['question_id']
-        content = body_params['content']
-        nickname = body_params['nickname']
-        password = body_params['password']
-        created_at = body_params['created_at']
+        found_answer = DataSearchEngine.search_by_id(DataPool.ANSWER_LIST, answer_id)
 
-        found = get_datapool().get_question_by_id(question_id)
-
-        if found is None:
-            raise QuestionNotFoundError()
-        if found.password != password:
+        if found_answer is None:
+            raise AnswerNotFoundError()
+        if found_answer.password != body_params['password']:
             raise PasswordIncorrectError()
 
         elem = Answer(
-            id = get_datapool().get_next_id(get_datapool().ANSWER_LIST),
-            question_id = question_id,
-            content = content,
-            nickname = nickname,
-            password = password,
+            id = DataPool.get_next_id(DataPool.ANSWER_LIST),
+            question_id = body_params['question_id'],
+            content = body_params['content'],
+            nickname = body_params['nickname'],
+            password = body_params['password'],
             recomment = 0,
             isAdopted = False,
-            created_at = found.created_at,
-            updated_at = created_at
+            created_at = found_answer.created_at,
+            updated_at = body_params['created_at']
         )
 
-        get_datapool().ANSWER_LIST.append(elem)
+        DataPool.add(DataPool.ANSWER_LIST, elem)
 
         return normal_response_json({
             "message" : "answer created successfully"
         }, 201)
-    except QuestionNotFoundError as e:
+    except AnswerNotFoundError as e:
         return error_response(404, error_msg_key, e.message)
     except PasswordIncorrectError as e:
         return error_response(403, error_msg_key, e.message)
@@ -85,17 +78,14 @@ def C_DET_02_modify_answer(request):
 def C_DET_03_delete_answer(request, answer_id):
     try:
         body_params = json.loads(request.body.decode("utf-8"))
-        password = body_params['password']
+        found_answer = DataSearchEngine.search_by_id(DataPool.ANSWER_LIST, answer_id)
 
-
-        found = get_datapool().get_by_id(get_datapool().ANSWER_LIST, answer_id)
-
-        if found is None:
+        if found_answer is None:
             raise AnswerNotFoundError()
-        if found.password != password:
+        if found_answer.password != body_params['password']:
             raise PasswordIncorrectError()
-
-        get_datapool().delete(get_datapool().ANSWER_LIST, found)
+        
+        DataPool.delete(DataPool.ANSWER_LIST, found_answer)
 
         return normal_response_json({
             "message" : "answer deleted successfully"
@@ -110,16 +100,15 @@ def C_DET_03_delete_answer(request, answer_id):
 def C_DET_04_adopt_answer(request, answer_id):
     try:
         body_params = json.loads(request.body.decode("utf-8"))
-        password = body_params['password']
 
-        found = get_datapool().get_by_id(get_datapool().ANSWER_LIST, answer_id)
-        parent_question = get_datapool().get_by_id(get_datapool().QUESTION_LIST, answer_id)
+        found = DataSearchEngine.search_by_id(DataPool.ANSWER_LIST, answer_id)
+        parent_question = DataSearchEngine.search_by_id(DataPool.QUESTION_LIST, found.question_id)
 
         if found is None:
             raise AnswerNotFoundError()
         if parent_question is None:
             raise QuestionNotFoundError()
-        if parent_question.password != password:
+        if parent_question.password != body_params['password']:
             raise PasswordIncorrectError()
 
         found.isAdopted = True

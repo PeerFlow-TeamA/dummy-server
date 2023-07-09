@@ -7,21 +7,31 @@ from .exceptions import *
 
 def C_DET_00_get_question_detail(request, question_id):
     try:
-        body_params = json.loads(request.body.decode("utf-8"))
-        password = body_params['password']
-        
-        found = get_datapool().get_question_by_id(question_id)
+        body_params = json.loads(request.body.decode("utf-8"))\
 
-        if found is None:
+        found_question : Question = DataSearchEngine.search_by_id(DataPool.QUESTION_LIST, question_id)
+        if found_question is None:
             raise QuestionNotFoundError()
-        if found.password != password:
+        if found_question.password != body_params['password']:
             raise PasswordIncorrectError()
 
-        get_datapool().QUESTION_LIST.remove(found)
+        found_comments : list = DataSearchEngine.search_by_question_id(DataPool.ANSWER_LIST, question_id)
+        
 
-        return normal_response_json({
-            "message" : "question deleted successfully"
-        })
+        response = {
+            "nickname" : found_question.nickname,
+            "content" : found_question.content,
+            "created_at" : found_question.created_at,
+            "updated_at" : found_question.updated_at,
+            "answerList" : [comment.to_dict() for comment in found_comments],
+            "type" : "question",
+            "title" : found_question.title,
+            "category" : found_question.category,
+            "recommend" : found_question.recommend,
+            "view" : found_question.view,
+        }        
+
+        return normal_response_json(response, 200)
     except QuestionNotFoundError as e:
         return error_response(400, error_msg_key, question_not_found_error_msg)
     except Exception as e:

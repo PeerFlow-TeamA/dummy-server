@@ -7,7 +7,7 @@ from .exceptions import *
 
 def C_DET_13_recomment_question(request, question_id):
     try:
-        found = get_datapool().get_question_by_id(question_id)
+        found = DataSearchEngine.search_by_id(DataPool.QUESTION_LIST, question_id)
 
         if found is None:
             raise QuestionNotFoundError()
@@ -25,7 +25,7 @@ def C_DET_13_recomment_question(request, question_id):
 
 def C_DET_14_recomment_answer(request, answer_id):
     try:
-        found = get_datapool().get_answer_by_id(answer_id)
+        found = DataSearchEngine.search_by_id(DataPool.ANSWER_LIST, answer_id)
 
         if found is None:
             raise AnswerNotFoundError()
