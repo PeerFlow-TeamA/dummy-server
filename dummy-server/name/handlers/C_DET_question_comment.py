@@ -6,6 +6,7 @@ from .env import *
 from .exceptions import *
 from .pageable import *
 
+@request_only(HTTP_METHOD.POST)
 def C_DET_05_create_question_comment(request, question_id):
     try:
         body_params = json.loads(request.body.decode("utf-8"))
@@ -34,6 +35,7 @@ def C_DET_05_create_question_comment(request, question_id):
     except Exception as e:
         return error_response(500, error_msg_key, "Error occured - " + str(e))
 
+@request_only(HTTP_METHOD.PUT)
 def C_DET_06_modify_question_comment(request, question_id, comment_id):
     try:
         body_params = json.loads(request.body.decode("utf-8"))
@@ -72,6 +74,8 @@ def C_DET_06_modify_question_comment(request, question_id, comment_id):
     except Exception as e:
         return error_response(500, error_msg_key, "Error occured - " + str(e))
     
+
+@request_only(HTTP_METHOD.POST)
 def C_DET_07_delete_question_comment(request, question_id, comment_id):
     try:
         body_params = json.loads(request.body.decode("utf-8"))
@@ -100,6 +104,7 @@ def C_DET_07_delete_question_comment(request, question_id, comment_id):
     except Exception as e:
         return error_response(500, error_msg_key, "Error occured - " + str(e))
 
+@request_only(HTTP_METHOD.GET)
 def C_DET_08_get_all_of_comment_by_question_id(request, question_id):
     try:
         query_params = get_query_params(request)

@@ -5,6 +5,7 @@ from .entity import *
 from .env import *
 from .exceptions import *
 
+@request_only(HTTP_METHOD.POST)
 def C_DET_01_create_answer(request):
     try:
         body_params = json.loads(request.body.decode("utf-8"))
@@ -40,7 +41,8 @@ def C_DET_01_create_answer(request):
         return error_response(404, error_msg_key, question_not_found_error_msg)
     except Exception as e:
         return error_response(500, error_msg_key, "Error occured - " + str(e))
-    
+
+@request_only(HTTP_METHOD.PUT)
 def C_DET_02_modify_answer(request, answer_id):
     try:
         body_params = json.loads(request.body.decode("utf-8"))
@@ -75,6 +77,7 @@ def C_DET_02_modify_answer(request, answer_id):
     except Exception as e:
         return error_response(500, error_msg_key, "Error occured - " + str(e))
     
+@request_only(HTTP_METHOD.POST)
 def C_DET_03_delete_answer(request, answer_id):
     try:
         body_params = json.loads(request.body.decode("utf-8"))
@@ -97,6 +100,7 @@ def C_DET_03_delete_answer(request, answer_id):
     except Exception as e:
         return error_response(500, error_msg_key, "Error occured - " + str(e))
 
+@request_only(HTTP_METHOD.PATCH)
 def C_DET_04_adopt_answer(request, answer_id):
     try:
         body_params = json.loads(request.body.decode("utf-8"))

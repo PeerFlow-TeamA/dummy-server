@@ -5,6 +5,7 @@ from .entity import *
 from .env import *
 from .exceptions import *
 
+@request_only(HTTP_METHOD.POST)
 def C_DET_13_recomment_question(request, question_id):
     try:
         found = DataSearchEngine.search_by_id(DataPool.QUESTION_LIST, question_id)
@@ -22,7 +23,7 @@ def C_DET_13_recomment_question(request, question_id):
     except Exception as e:
         return error_response(500, error_msg_key, "Error occured - " + str(e))
 
-
+@request_only(HTTP_METHOD.POST)
 def C_DET_14_recomment_answer(request, answer_id):
     try:
         found = DataSearchEngine.search_by_id(DataPool.ANSWER_LIST, answer_id)

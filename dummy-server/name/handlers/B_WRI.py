@@ -7,6 +7,7 @@ from .env import *
 from .exceptions import *
 import json
 
+@request_only(HTTP_METHOD.POST)
 def B_WRI_00_create_question(request):
     try:
         body_params = json.loads(request.body.decode("utf-8"))
@@ -43,6 +44,7 @@ def B_WRI_00_create_question(request):
     except Exception as e:
         return error_response(500, error_msg_key, "Error occured - " + str(e))
 
+@request_only(HTTP_METHOD.PUT)
 def B_WRI_01_modify_question(request):
     try:
         body_params = json.loads(request.body.decode("utf-8"))
@@ -86,6 +88,7 @@ def B_WRI_01_modify_question(request):
     except Exception as e:
         return error_response(500, error_msg_key, "Error occured - " + str(e))
 
+@request_only(HTTP_METHOD.POST)
 def B_WRI_02_delete_question(request, question_id):
     try:
         body_params = json.loads(request.body.decode("utf-8"))

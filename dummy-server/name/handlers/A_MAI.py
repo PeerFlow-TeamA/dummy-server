@@ -18,7 +18,6 @@ def A_MAI_00_handler(request):
 
         questions = DataSearchEngine.search_by_category(DataPool.QUESTION_LIST, query_params['category'])
         page, size = int(query_params['page']), int(query_params['size'])
-        print(questions)
         cropper = DataCropper.crop_page(questions, page, size)
         pageable = Pageable(cropper, page, size, query_params['sort'])
         return normal_response_json(pageable.to_dict())

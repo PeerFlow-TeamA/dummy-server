@@ -5,6 +5,7 @@ from .entity import *
 from .env import *
 from .exceptions import *
 
+@request_only(HTTP_METHOD.GET)
 def C_DET_00_get_question_detail(request, question_id):
     try:
         body_params = json.loads(request.body.decode("utf-8"))\

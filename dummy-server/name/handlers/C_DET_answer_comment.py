@@ -6,6 +6,7 @@ from .env import *
 from .exceptions import *
 from .pageable import *
 
+@request_only(HTTP_METHOD.POST)
 def C_DET_09_create_answer_comment(request, answer_id):
     try:
         body_params = json.loads(request.body.decode("utf-8"))
@@ -39,6 +40,7 @@ def C_DET_09_create_answer_comment(request, answer_id):
     except Exception as e:
         return error_response(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR, error_msg_key, "Error occured - " + str(e))
 
+@request_only(HTTP_METHOD.PUT)
 def C_DET_10_modify_answer_comment(request, answer_id, comment_id):
     try:
         body_params = json.loads(request.body.decode("utf-8"))
@@ -77,6 +79,7 @@ def C_DET_10_modify_answer_comment(request, answer_id, comment_id):
     except Exception as e:
         return error_response(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR, error_msg_key, "Error occured - " + str(e))
 
+@request_only(HTTP_METHOD.POST)
 def C_DET_11_delete_answer_comment(request, answer_id, comment_id):
     try:
         body_params = json.loads(request.body.decode("utf-8"))
@@ -108,6 +111,7 @@ def C_DET_11_delete_answer_comment(request, answer_id, comment_id):
     except Exception as e:
         return error_response(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR, error_msg_key, "Error occured - " + str(e))
 
+@request_only(HTTP_METHOD.GET)
 def C_DET_12_get_all_of_comment_answer(request, answer_id):
     try:
         found = DataSearchEngine.get_by_id(DataPool.ANSWER_LIST, answer_id)
@@ -134,12 +138,16 @@ def C_DET_12_get_all_of_comment_answer(request, answer_id):
 
 @csrf_exempt
 def C_DET_answer_comment_handler(request, answer_id = None, comment_id = None):
+
     if request.method == HTTP_METHOD.PUT and answer_id is not None and comment_id is not None:
         return C_DET_10_modify_answer_comment(request, answer_id, comment_id)
+    
     if request.method == HTTP_METHOD.POST and answer_id is not None and comment_id is not None:
         return C_DET_11_delete_answer_comment(request, answer_id, comment_id)
+    
     if request.method == HTTP_METHOD.GET and answer_id is not None:
         return C_DET_12_get_all_of_comment_answer(request, answer_id)
+    
     if request.method == HTTP_METHOD.POST and answer_id is not None:
         return C_DET_09_create_answer_comment(request, answer_id)
     return not_allowed_method_response()
