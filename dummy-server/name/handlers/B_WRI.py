@@ -11,26 +11,19 @@ import json
 def B_WRI_00_create_question(request):
     try:
         body_params = json.loads(request.body.decode("utf-8"))
-        id = body_params['id']
-        title = body_params['title']
-        content = body_params['content']
-        nickname = body_params['nickname']
-        password = body_params['password']
-        category = body_params['category']
-        created_at = body_params['created_at']
-
-        if category not in env.get("category_limit"):
-            raise CategoryValueError(category)
+        if body_params['category'] not in env.get("category_limit"):
+            raise CategoryValueError()
 
         elem = Question(
-            id = id,
-            title = title,
-            content = content,
-            nickname = nickname,
-            password = password,
+            id = DataPool.get_next_id(DataPool.QUESTION_LIST),
+            title = body_params['title'],
+            content = body_params['content'],
+            category = body_params['category'],
+            nickname = body_params['nickname'],
+            password = body_params['password'],
             views = 0,
             recomment = 0,
-            created_at = created_at,
+            created_at = body_params['created_at'],
             updated_at = None
         )
 
@@ -48,34 +41,28 @@ def B_WRI_00_create_question(request):
 def B_WRI_01_modify_question(request):
     try:
         body_params = json.loads(request.body.decode("utf-8"))
-        id = body_params['id']
-        title = body_params['title']
-        content = body_params['content']
-        nickname = body_params['nickname']
-        password = body_params['password']
-        category = body_params['category']
-        created_at = body_params['created_at']
 
-        if category not in env.get("category_limit"):
-            raise CategoryValueError(category)
+        if body_params['category'] not in env.get("category_limit"):
+            raise CategoryValueError()
 
         found = DataSearchEngine.search_by_id(DataPool.QUESTION_LIST, id)
 
         if found is None:
             raise QuestionNotFoundError()
-        if found.password != password:
+        if found.password != body_params['password']:
             raise PasswordIncorrectError()
 
         elem = Question(
-            id = id,
-            title = title,
-            content = content,
-            nickname = nickname,
-            password = password,
+            id = DataPool.get_next_id(DataPool.QUESTION_LIST),
+            title = body_params['title'],
+            content = body_params['content'],
+            category = body_params['category'],
+            nickname = body_params['nickname'],
+            password = body_params['password'],
             views = found.views,
             recomment = found.recomment,
             created_at = found.created_at,
-            updated_at = created_at
+            updated_at = body_params['created_at']
         )
 
         DataPool.replace(DataPool.QUESTION_LIST, found, elem)

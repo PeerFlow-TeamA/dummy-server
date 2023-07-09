@@ -8,7 +8,7 @@ from .exceptions import *
 @request_only(HTTP_METHOD.GET)
 def C_DET_00_get_question_detail(request, question_id):
     try:
-        body_params = json.loads(request.body.decode("utf-8"))\
+        body_params = json.loads(request.body.decode("utf-8"))
 
         found_question : Question = DataSearchEngine.search_by_id(DataPool.QUESTION_LIST, question_id)
         if found_question is None:
