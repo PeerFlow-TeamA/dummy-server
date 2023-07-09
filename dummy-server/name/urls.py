@@ -31,6 +31,7 @@ urlpatterns = [
     path("v1/answer", views.C_DET_answer_handler),
     path("v1/answer/<int:question_id>", views.C_DET_answer_handler),
     path("v1/question/<int:question_id>/comment", views.C_DET_question_comment_handler),
+    path("v1/question/<int:question_id>/comment/<int:comment_id>", views.C_DET_question_comment_handler),
 ]
 
 # API documentation
