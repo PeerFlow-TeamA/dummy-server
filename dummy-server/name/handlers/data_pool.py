@@ -72,7 +72,7 @@ class DataPool():
     def get_answer_comment_list(self):
         return self.pool["answer_comment_list"]
     
-    def get_by_id(self, data : list, id : str):
+    def get_by_id(self, data : list, id : int):
         for item in data:
             if item.id == id:
                 return item
@@ -87,7 +87,10 @@ class DataPool():
 
     def get_next_id(self, data : list):
         return len(data)
-
+    
+    def get_all_by_id(data : list, id : id):
+        return list(filter(lambda x : x.id == id, data))
+    
 class InvalidPageError(Exception):
     pass
 
