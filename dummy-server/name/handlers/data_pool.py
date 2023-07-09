@@ -85,6 +85,9 @@ class DataPool():
     def delete(self, data : list, target : object):
         data.remove(target)
 
+    def get_next_id(self, data : list):
+        return len(data)
+
 class InvalidPageError(Exception):
     pass
 
