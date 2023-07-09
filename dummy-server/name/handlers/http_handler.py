@@ -7,6 +7,7 @@ class HTTP_METHOD():
     POST = "POST"
     PUT = "PUT"
     DELETE = "DELETE"
+    PATCH = "PATCH"
 
 def error_response(status_code, message_key, message):
     return JsonResponse({
