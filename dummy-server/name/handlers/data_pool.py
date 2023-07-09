@@ -88,9 +88,14 @@ class DataPool():
     def get_next_id(self, data : list):
         return len(data)
     
-    def get_all_by_id(data : list, id : id):
-        return list(filter(lambda x : x.id == id, data))
+    def get_all_comments_on_question(self, question_id : int):
+        return list(filter(lambda x : x.question_id == question_id, self.get_question_comment_list()))
     
+    def get_all_comments_on_answer(self, answer_id : int):
+        return list(filter(lambda x : x.answer_id == answer_id, self.get_answer_comment_list()))
+
+
+
 class InvalidPageError(Exception):
     pass
 

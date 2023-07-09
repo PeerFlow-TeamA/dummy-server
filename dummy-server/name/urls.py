@@ -24,14 +24,17 @@ urlpatterns = [
     # A_MAI
     path("v1", views.A_MAI_00_handler),
     path("v1/search", views.A_MAI_01_handler),
-    # B_WRI
-    path("v1/question", views.B_WRI_question_handler),
-    # C_DET
-    path("v1/question/<int:question_id>", views.C_DET_question_handler),
-    path("v1/answer", views.C_DET_answer_handler),
-    path("v1/answer/<int:question_id>", views.C_DET_answer_handler),
-    path("v1/question/<int:question_id>/comment", views.C_DET_question_comment_handler),
     path("v1/question/<int:question_id>/comment/<int:comment_id>", views.C_DET_question_comment_handler),
+    path("v1/question/<int:question_id>/comment", views.C_DET_question_comment_handler),
+    path("v1/question/<int:question_id>", views.C_DET_question_handler),
+    path("v1/question", views.B_WRI_question_handler),
+    path("v1/answer", views.C_DET_answer_handler),
+    path("v1/answer/<int:answer_id>/comment/<int:comment_id>", views.C_DET_answer_comment_handler),
+    path("v1/answer/<int:answer_id>/comment", views.C_DET_answer_comment_handler),
+    path("v1/answer/<int:question_id>", views.C_DET_answer_handler),
+
+
+
 ]
 
 # API documentation

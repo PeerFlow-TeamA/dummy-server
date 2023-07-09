@@ -27,7 +27,7 @@ def C_DET_00_get_question_detail(request, question_id):
     except Exception as e:
         return error_response(500, error_msg_key, "Error occured - " + str(e))
 
-
+@csrf_exempt
 def C_DET_question_handler(request, question_id = None):
     if request.method == HTTP_METHOD.GET and question_id is not None:
         return C_DET_00_get_question_detail(request, question_id)
