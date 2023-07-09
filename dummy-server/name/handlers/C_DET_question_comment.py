@@ -51,15 +51,14 @@ def C_DET_06_modify_question_comment(request, question_id, comment_id):
 
         if found_question is None:
             raise QuestionNotFoundError()
-        if found_comment.password != password:
-            raise PasswordIncorrectError()
         if found_comment is None:
             raise QuestionCommentNotFoundError()
+        if found_comment.password != password:
+            raise PasswordIncorrectError()
 
         found_comment.content = content
         found_comment.nickname = nickname
         found_comment.updated_at = created_at
-
 
         return normal_response_json({
             "message" : "question comment modified successfully"
@@ -73,7 +72,34 @@ def C_DET_06_modify_question_comment(request, question_id, comment_id):
     except Exception as e:
         return error_response(500, error_msg_key, "Error occured - " + str(e))
     
-    
+def C_DET_07_delete_question_comment(request, question_id, comment_id):
+    try:
+        body_params = json.loads(request.body.decode("utf-8"))
+        password = body_params['password']
+
+        found_question = get_datapool().get_by_id(get_datapool().QUESTION_LIST, question_id)
+        found_comment = get_datapool().get_by_id(get_datapool().QUESTION_COMMENT_LIST, comment_id)
+
+        if found_question is None:
+            raise QuestionNotFoundError()
+        if found_comment is None:
+            raise QuestionCommentNotFoundError()
+        if found_comment.password != password:
+            raise PasswordIncorrectError()
+
+        get_datapool().delete(get_datapool().QUESTION_COMMENT_LIST, found_comment)
+
+        return normal_response_json({
+            "message" : "question comment deleted successfully"
+        })
+    except QuestionNotFoundError as e:
+        return error_response(404, error_msg_key, question_not_found_error_msg)
+    except QuestionCommentNotFoundError as e:
+        return error_response(404, error_msg_key, question_comment_not_found_error_msg)
+    except PasswordIncorrectError as e:
+        return error_response(403, error_msg_key, password_incorrect_error_msg)
+    except Exception as e:
+        return error_response(500, error_msg_key, "Error occured - " + str(e))
 
 @csrf_exempt
 def C_DET_question_comment_handler(request, question_id = None, comment_id = None):
@@ -82,4 +108,7 @@ def C_DET_question_comment_handler(request, question_id = None, comment_id = Non
     
     if request.method == HTTP_METHOD.PUT and question_id is not None and comment_id is not None:
         return C_DET_06_modify_question_comment(request, question_id, comment_id)
+    
+    if request.method == HTTP_METHOD.DELETE and question_id is not None and comment_id is not None:
+        return C_DET_07_delete_question_comment(request, question_id, comment_id)
     return not_allowed_method_response()
