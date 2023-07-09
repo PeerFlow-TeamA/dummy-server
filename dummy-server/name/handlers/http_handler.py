@@ -47,9 +47,11 @@ def not_allowed_method_response():
 #      return normal_response_json({
 #          "message" : "hello world"
 #      })
-def request_only(func, method):
-    def wrapper(request):
-        if request.method != method:
-            return not_allowed_method_response()
-        return func(request)
-    return wrapper
+def request_only(method):
+    def impl(func):
+        def wrapper(request):
+            if request.method != method:
+                return not_allowed_method_response()
+            return func(request)
+        return wrapper
+    return impl

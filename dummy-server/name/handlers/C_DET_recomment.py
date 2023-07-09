@@ -42,8 +42,12 @@ def C_DET_14_recomment_answer(request, answer_id):
 
 @csrf_exempt
 def C_DET_recommentation_handler(request, question_id = None, answer_id = None):
+    # url : /question/<int:question_id>/recomment
     if request.method == HTTP_METHOD.POST and question_id is not None:
         return C_DET_13_recomment_question(request, question_id)
-    elif request.method == HTTP_METHOD.POST and answer_id is not None:
+    
+    # url : /answer/<int:answer_id>/recomment
+    if request.method == HTTP_METHOD.POST and answer_id is not None:
         return C_DET_14_recomment_answer(request, answer_id)
+    
     return not_allowed_method_response()

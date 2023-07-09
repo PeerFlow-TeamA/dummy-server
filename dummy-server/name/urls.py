@@ -26,17 +26,14 @@ urlpatterns = [
     path("v1/search", views.A_MAI_01_handler),
     path("v1/question/<int:question_id>/comment/<int:comment_id>", views.C_DET_question_comment_handler),
     path("v1/question/<int:question_id>/comment", views.C_DET_question_comment_handler),
-    path("v1/question/<int:question_id>/recommendation", views.C_DET_recomment_handler),
+    path("v1/question/<int:question_id>/recommendation", views.C_DET_recommentation_handler),
     path("v1/question/<int:question_id>", views.C_DET_question_handler),
     path("v1/question", views.B_WRI_question_handler),
     path("v1/answer", views.C_DET_answer_handler),
     path("v1/answer/<int:answer_id>/comment/<int:comment_id>", views.C_DET_answer_comment_handler),
     path("v1/answer/<int:answer_id>/comment", views.C_DET_answer_comment_handler),
-    path("v1/answer/<int:answer_id>/recommendation", views.C_DET_recomment_handler),
+    path("v1/answer/<int:answer_id>/recommendation", views.C_DET_recommentation_handler),
     path("v1/answer/<int:question_id>", views.C_DET_answer_handler),
-
-
-
 ]
 
 # API documentation
