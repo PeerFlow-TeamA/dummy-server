@@ -26,6 +26,23 @@ urlpatterns = [
     path("v1/search", views.A_MAI_01_handler),
     # B_WRI
     path("v1/question", views.B_WRI_question_handler),
-    path("v1/question/<int:question_id>", views.B_WRI_question_handler),
+    path("v1/question/<int:question_id>", views.C_DET_question_handler),
+    path("v1/answer", views.C_DET_answer_handler),
     # C_DET
 ]
+
+# API documentation
+# url | method | description
+# --- | ------ | -----------
+# ... | A_MAI_apis | ...
+# /v1 | GET | Get all questions
+# /v1/search | GET | Search questions by title
+# ... | B_WRI_apis | ...
+# /v1/question | POST | Create a question
+# /v1/question/{question_id} | PUT | modify a question by id
+# /v1/question/{question_id} | POST | delete a question by id
+# ... | C_DET_apis | ...
+# /v1/question/{question_id} | GET | Get a question by id
+# /v1/answer | POST | Create an answer
+
+
