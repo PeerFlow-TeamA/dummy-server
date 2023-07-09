@@ -4,6 +4,7 @@ from .data_pool import *
 from .entity import *
 from .env import *
 from .exceptions import *
+from .pageable import *
 
 def C_DET_05_create_question_comment(request, question_id):
     try:
@@ -101,6 +102,25 @@ def C_DET_07_delete_question_comment(request, question_id, comment_id):
     except Exception as e:
         return error_response(500, error_msg_key, "Error occured - " + str(e))
 
+def C_DET_08_get_all_of_comment_by_question_id(request, question_id):
+    try:
+        query_params = get_query_params(request)
+        page, size = int(query_params['page']), int(query_params['size'])
+        filtered = filter(lambda x: x.question_id == question_id, get_datapool().QUESTION_COMMENT_LIST)
+        
+        if filtered is None or len(filtered) == 0:
+            raise QuestionNotFoundError()
+        
+        cropper = DataCropper(filtered, page, size)
+        sort = "views"
+        pageable = Pageable(cropper, page, size, sort)
+
+        return normal_response_json(pageable.to_dict())
+    except QuestionNotFoundError as e:
+        return error_response(404, error_msg_key, question_not_found_error_msg)
+    except Exception as e:
+        return error_response(500, error_msg_key, "Error occured - " + str(e))
+
 @csrf_exempt
 def C_DET_question_comment_handler(request, question_id = None, comment_id = None):
     if request.method == HTTP_METHOD.POST and question_id is not None:
@@ -109,6 +129,9 @@ def C_DET_question_comment_handler(request, question_id = None, comment_id = Non
     if request.method == HTTP_METHOD.PUT and question_id is not None and comment_id is not None:
         return C_DET_06_modify_question_comment(request, question_id, comment_id)
     
-    if request.method == HTTP_METHOD.DELETE and question_id is not None and comment_id is not None:
+    if request.method == HTTP_METHOD.POST and question_id is not None and comment_id is not None:
         return C_DET_07_delete_question_comment(request, question_id, comment_id)
+    
+    if request.method == HTTP_METHOD.GET and question_id is not None:
+        return C_DET_08_get_all_of_comment_by_question_id(request, question_id)
     return not_allowed_method_response()
