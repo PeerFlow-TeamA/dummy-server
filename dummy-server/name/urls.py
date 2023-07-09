@@ -26,9 +26,11 @@ urlpatterns = [
     path("v1/search", views.A_MAI_01_handler),
     # B_WRI
     path("v1/question", views.B_WRI_question_handler),
+    # C_DET
     path("v1/question/<int:question_id>", views.C_DET_question_handler),
     path("v1/answer", views.C_DET_answer_handler),
-    # C_DET
+    path("v1/answer/<int:question_id>", views.C_DET_answer_handler),
+    path("v1/question/<int:question_id>/comment", views.C_DET_question_comment_handler),
 ]
 
 # API documentation
